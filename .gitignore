@@ -2,3 +2,5 @@
 *.pth
 *checkpoint.ipynb
 cat_to_name.json
+.ipynb_checkpoints
+*.pyc

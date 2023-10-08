@@ -3,7 +3,7 @@ import torch
 from get_predict_input_args import get_predict_input_args
 from process_image import process_image
 from get_prediction import get_prediction
-from map_class_names import map_class_names
+from load_checkpoint import load_checkpoint
 
 
 def main():
@@ -14,17 +14,16 @@ def main():
     """
     args = get_predict_input_args()
 
-    print(args)
-
-    use_gpu = torch.cuda.is_available() & args.gpu
+    use_gpu = torch.cuda.is_available() and args.gpu
     device = torch.device('cuda' if use_gpu else 'cpu')
 
     image = process_image(args.image_path)
 
-    ps = get_prediction(image, device)
+    model, optimizer, epoch_counter = load_checkpoint(
+        args.checkpoint_path)
 
-    topk_values, topk_indices = torch.topk(ps, k=args.top_k)
-    class_names = map_class_names(args.category_names, topk_indices)
+    values, class_names, classes = get_prediction(
+        image, model, device, args.category_names, topk=args.top_k)
 
     print(class_names)
 

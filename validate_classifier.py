@@ -1,18 +1,14 @@
 import torch
 
 
-def validate_classifier(model, pretrained, testloader, criterion, device='cpu'):
+def validate_classifier(model, validloader, criterion, device='cpu'):
     accuracy = 0
     test_loss = 0
-    model = model.to(device)
 
-    for images, labels in testloader:
-        images = images.to(device)
-        labels = labels.to(device)
+    for images, labels in validloader:
+        images, labels = images.to(device), labels.to(device)
 
-        features = pretrained(images)
-
-        output = model.forward(features)
+        output = model(images)
         test_loss += criterion(output, labels).item()
 
         ps = torch.exp(output)

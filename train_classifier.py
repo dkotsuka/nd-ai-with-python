@@ -3,28 +3,25 @@ import torch
 from validate_classifier import validate_classifier
 
 
-def train_classifier(model, pretrained, trainloader, validationloader, criterion, optimizer, epochs=5, device='cpu'):
+def train_classifier(model, trainloader, validloader, criterion, optimizer, epochs=5, device='cpu', print_every=20):
 
-    steps = 0
     running_loss = 0
-
-    print_every = 10
 
     model = model.to(device)
 
+    print("Training started using {}...".format(device))
+
     for e in range(epochs):
         model.train()
+        steps = 0
         for images, labels in trainloader:
             steps += 1
 
-            images = images.to(device)
-            features = pretrained(images)
-
-            labels = labels.to(device)
+            images, labels = images.to(device), labels.to(device)
 
             optimizer.zero_grad()
 
-            output = model.forward(features)
+            output = model(images)
             loss = criterion(output, labels)
             loss.backward()
             optimizer.step()
@@ -37,16 +34,18 @@ def train_classifier(model, pretrained, trainloader, validationloader, criterion
 
                 with torch.no_grad():
                     test_loss, accuracy = validate_classifier(
-                        model, pretrained, validationloader, criterion, device)
+                        model, validloader, criterion, device)
 
                 print("Epoch: {}/{}.. ".format(e+1, epochs),
                       "Batch: {}/{}.. ".format(steps, len(trainloader)),
                       "Training Loss: {:.3f}.. ".format(
                           running_loss/print_every),
                       "Test Loss: {:.3f}.. ".format(
-                          test_loss/len(validationloader)),
-                      "Test Accuracy: {:.3f}".format(accuracy/len(validationloader)))
+                          test_loss/len(validloader)),
+                      "Test Accuracy: {:.3f}".format(accuracy/len(validloader)))
 
                 running_loss = 0
 
                 model.train()
+
+    return epochs

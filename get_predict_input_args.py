@@ -16,8 +16,8 @@ def get_predict_input_args():
                         help='Path to image file to predict')
 
     # optional args
-    parser.add_argument('--checkpoint_dir', type=str, default='checkpoints',
-                        help='Directory to load checkpoint')
+    parser.add_argument('--checkpoint_path', type=str, default='checkpoints/checkpoint-resnet.pth',
+                        help='Path to load checkpoint')
     parser.add_argument('--category_names', type=str, default='cat_to_name.json',
                         help='File with category names')
     parser.add_argument('--top_k', type=int,
