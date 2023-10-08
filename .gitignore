@@ -1,0 +1,4 @@
+/class_files
+*.pth
+*checkpoint.ipynb
+cat_to_name.json
